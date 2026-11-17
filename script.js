@@ -228,20 +228,25 @@ dot.onclick=e=>{e.stopPropagation();if(playing)return;current=i;selected=null;
  render()};b.append(dot);b.onclick=()=>{if(playing)return;current=i;selected=null;render()};root.append(b)})}
 function render(){rememberImageEdit();renderStage();renderTimeline();figButtons.forEach(b=>b.disabled=!piece());syncLockButton();undoImageButton.disabled=playing||imageHistoryAt<=0;redoImageButton.disabled=playing||imageHistoryAt>=imageHistory.length-1;updateSpeed();scheduleAutoSave()}
 function buildVideoAwareTimeline(snapshot,fps){
- // A animação é uma linha do tempo independente: todos os quadros avançam
- // continuamente. Os vídeos são camadas sobrepostas, iniciadas no quadro em
- // que foram marcados, e não substituem nem congelam a sequência de quadros.
- const base=1000/Math.max(1,fps),events=[];let previousId=null,previousMarked=false;
+ // Os quadros formam a animação contínua. Cada vídeo ocupa uma faixa exclusiva:
+ // se outro vídeo estiver marcado antes do anterior terminar, ele entra na fila
+ // e começa somente depois, sem sobreposição de áudio ou imagem.
+ const base=1000/Math.max(1,fps),events=[];let previousId=null,previousMarked=false,videoLaneEnd=0;
  snapshot.forEach((f,index)=>{
   const id=f.showVideo?(f.videoClipId||clipForFrame(f)?.id||null):null;
   if(id&&(!previousMarked||id!==previousId)){
-   const clip=videoClips.find(c=>c.id===id),duration=Math.max(base,(Number(clip?.video?.duration)||0)*1000);
-   events.push({id,clipId:id,start:index*base,end:index*base+duration,placement:f.videoPlacement||{x:50,y:53,size:38,angle:0},startIndex:index});
+   const clip=videoClips.find(c=>c.id===id);
+   const duration=Math.max(base,(Number(clip?.video?.duration)||0)*1000);
+   const requestedStart=index*base;
+   const start=Math.max(requestedStart,videoLaneEnd);
+   const end=start+duration;
+   events.push({id,clipId:id,start,end,requestedStart,placement:f.videoPlacement||{x:50,y:53,size:38,angle:0},startIndex:index});
+   videoLaneEnd=end;
   }
   previousMarked=!!id;previousId=id;
  });
  const animationDuration=Math.max(base,snapshot.length*base);
- const total=Math.max(animationDuration,...events.map(e=>e.end));
+ const total=Math.max(animationDuration,videoLaneEnd);
  return {base,events,total,animationDuration,count:Math.max(1,snapshot.length)};
 }
 function timelineFrameIndex(timeline,elapsedMs){
