@@ -725,3 +725,118 @@
 
 /* v86 — títulos dos livros em caixa alta para facilitar a leitura dos alunos do 1º ano */
 #chooser #books .book > span:not(.book-classes){text-transform:uppercase!important}
+
+/* v88: organização dos quadros e intervalos dos vídeos */
+.frame[draggable="true"]{cursor:grab;touch-action:pan-y}
+.frame[draggable="true"]:active{cursor:grabbing}
+.frame-drop-target{outline:3px dashed #7b2947!important;outline-offset:-3px}
+.clip-list{display:flex;flex-direction:column;gap:5px;flex-basis:100%;max-height:160px;overflow:auto}
+.clip-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:11px}
+.clip-line select{font-size:12px;max-width:115px;padding:5px;border-radius:6px;border:1px solid #9c7c87;background:#fff}
+.clip-line .video-picker-button{font-size:11px!important;padding:5px!important;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* v90 — barra de vídeos: miniaturas, nomes e inclusão após seleção */
+.assets.video-mode .v90-video-bar{width:100%!important;min-width:100%!important;max-width:100%!important;overflow:hidden!important}
+.v90-video-gallery{display:flex;align-items:flex-start;gap:9px;flex:1 1 auto;min-width:0;height:100%;overflow-x:auto;overflow-y:hidden}
+.v90-video-item{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;flex:0 0 82px;gap:2px;min-width:0}
+.v90-video-tile{display:block;position:relative;width:72px;height:48px;padding:0;border:2px solid #e5ba6c;border-radius:4px;background:#eee;overflow:visible;cursor:pointer}
+.v90-video-tile.v90-selected{outline:2px solid #8d1c32;outline-offset:1px}
+.v90-video-thumb{width:100%;height:100%;object-fit:cover;pointer-events:none;background:#ddd}
+.v90-video-number{position:absolute;top:-7px;right:-7px;display:flex;align-items:center;justify-content:center;width:21px;height:21px;border-radius:50%;background:#171717;color:#fff;font-weight:900;font-size:11px}
+.v90-video-name{display:block;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#111;font-size:10px;line-height:1.2}
+.v90-video-add{position:absolute;z-index:8;top:51px;left:50%;transform:translateX(-50%);width:105px;padding:5px 3px;background:#8d1c32;color:#fff;border:1px solid #8d1c32;border-radius:5px;font-size:9px;font-weight:800;cursor:pointer;box-shadow:0 2px 5px #777}
+.v90-video-add[hidden]{display:none!important}
+.v90-video-upload{flex:0 0 90px!important;width:90px!important;max-width:90px!important;margin-left:auto!important;align-self:center!important;min-height:53px!important;font-size:10px!important}
+
+/* v91 */
+.v90-video-bar{min-height:112px!important;height:112px!important;align-items:center!important}
+.v90-video-gallery{min-height:100px!important;height:100px!important;padding-top:8px!important}
+.v90-video-item{flex-basis:92px!important;gap:5px!important;min-height:90px!important}
+.v90-video-name{font-family:inherit!important;font-size:12px!important;line-height:1.3!important;font-weight:600!important;white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere!important;max-height:36px!important}
+.v90-video-number{background:#86233e!important;color:#fff!important}
+.v90-video-add{top:54px!important}
+
+/* v92 — biblioteca de vídeos com nomes legíveis e ação sem sobreposição */
+.v90-video-bar{height:142px!important;min-height:142px!important;overflow:visible!important}
+.assets.video-mode .v90-video-bar{overflow:visible!important}
+.v90-video-gallery{height:132px!important;min-height:132px!important;overflow-x:auto!important;overflow-y:visible!important;align-items:flex-start!important;padding:8px 4px 2px!important}
+.v90-video-item{flex:0 0 112px!important;min-height:126px!important;gap:5px!important}
+.v90-video-tile{width:70px!important;height:47px!important;flex-shrink:0!important}
+.v90-video-name{font-family:Inter,Arial,sans-serif!important;font-size:11px!important;line-height:1.25!important;font-weight:800!important;color:#a40e2a!important;text-transform:uppercase!important;white-space:normal!important;overflow-wrap:anywhere!important;max-height:31px!important;min-height:27px!important}
+.v90-video-add{position:static!important;transform:none!important;width:108px!important;min-height:29px!important;padding:5px 3px!important;box-shadow:none!important;flex-shrink:0!important;font-family:Inter,Arial,sans-serif!important;font-size:9px!important;line-height:1.15!important}
+.v90-video-number{background:#86233e!important;color:white!important;border:1px solid #fff!important}
+.narration-dot.enabled{background:#86233e!important;color:#fff!important;border-color:#fff!important}
+.v90-video-upload{margin-left:auto!important;flex-shrink:0!important}
+
+/* v93: miniaturas completas, sem corte; clique direto para inserir vídeo */
+#editor .library .assets.video-mode{
+ height:76px!important;min-height:76px!important;max-height:76px!important;
+ overflow:hidden!important;align-items:center!important;padding:3px 5px!important;
+}
+.assets.video-mode .v90-video-bar{
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:center!important;width:100%!important;min-width:100%!important;
+ height:68px!important;min-height:68px!important;max-height:68px!important;
+ padding:2px 5px!important;gap:9px!important;overflow:hidden!important;
+ background:transparent!important;
+}
+.v90-video-bar .video-picker-heading{flex:0 0 auto!important;font-size:12px!important;align-self:center!important}
+.v90-video-bar .v90-video-gallery{
+ flex:1 1 auto!important;min-width:0!important;height:66px!important;min-height:66px!important;
+ padding:2px 5px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ align-items:flex-start!important;gap:12px!important;
+}
+.v90-video-bar .v90-video-item{
+ flex:0 0 94px!important;width:94px!important;min-height:60px!important;
+ gap:2px!important;align-items:center!important;
+}
+.v90-video-bar .v90-video-tile{
+ display:block!important;flex:0 0 43px!important;width:72px!important;height:43px!important;
+ overflow:visible!important;padding:0!important;
+}
+.v90-video-bar .v90-video-thumb{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important}
+.v90-video-bar .v90-video-name{
+ font-family:Inter,Arial,sans-serif!important;font-size:10px!important;line-height:1.15!important;
+ font-weight:800!important;color:#a40e2a!important;text-transform:uppercase!important;
+ min-height:12px!important;max-height:14px!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.v90-video-bar .v90-video-number{
+ position:absolute!important;top:-7px!important;right:-8px!important;
+ background:#86233e!important;color:#fff!important;border:1px solid white!important;
+}
+.v90-video-bar .v90-video-upload{
+ flex:0 0 90px!important;width:90px!important;margin-left:auto!important;
+ min-height:50px!important;align-self:center!important;
+}
+
+/* v94 — ajuste exclusivo de altura e alinhamento da barra VÍDEOS */
+#editor .library .assets.video-mode{
+ height:100px!important;min-height:100px!important;max-height:100px!important;
+ padding:5px 7px!important;overflow:visible!important;box-sizing:border-box!important;
+}
+.assets.video-mode .v90-video-bar{
+ height:88px!important;min-height:88px!important;max-height:88px!important;
+ padding:4px 6px!important;overflow:visible!important;box-sizing:border-box!important;
+}
+.v90-video-bar .v90-video-gallery{
+ height:82px!important;min-height:82px!important;max-height:82px!important;
+ padding:9px 8px 4px!important;box-sizing:border-box!important;
+ overflow-x:auto!important;overflow-y:hidden!important;align-items:flex-start!important;
+}
+.v90-video-bar .v90-video-item{
+ min-height:65px!important;height:65px!important;justify-content:flex-start!important;
+ padding-top:1px!important;box-sizing:border-box!important;
+}
+.v90-video-bar .v90-video-tile{flex:0 0 43px!important;height:43px!important;}
+.v90-video-bar .v90-video-name{
+ display:block!important;flex:0 0 auto!important;min-height:14px!important;
+ max-height:17px!important;line-height:14px!important;margin-top:3px!important;
+ overflow:visible!important;text-overflow:clip!important;
+}
+.v90-video-bar .v90-video-number{top:-6px!important;right:-7px!important;z-index:2!important;}
+
+/* A cena continua viva enquanto o vídeo do personagem fala em primeiro plano. */
+.stage.scene-playing .bg{animation:scene-bg-drift 14s ease-in-out infinite alternate;will-change:transform;transform-origin:center}
+/* Os personagens e objetos permanecem nas posições originais. Só o cenário recebe movimento sutil enquanto o vídeo é reproduzido. */
+@keyframes scene-bg-drift{from{transform:scale(1.025) translate3d(-.65%,.35%,0)}to{transform:scale(1.075) translate3d(.65%,-.35%,0)}}
