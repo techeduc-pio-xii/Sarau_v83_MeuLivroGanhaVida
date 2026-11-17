@@ -199,7 +199,7 @@ function renderAssets(){const root=$('assets');root.replaceChildren();root.class
 function createLayer(p,mini=false){const im=document.createElement('img');im.src=imageUrl(p.id);im.alt='';im.className=mini?'':'piece'+(selected===p.uid?' selected':'');im.style.left=p.x+'%';im.style.top=p.y+'%';im.style.width=p.size+'%';im.style.transform='translate(-50%,-50%) rotate('+p.angle+'deg) scaleX('+(p.flipX===-1?-1:1)+')';return im}
 function renderStage(){const stage=$('stage'),f=frames[current];stage.classList.toggle('scene-playing',playing);stage.replaceChildren();if(f.background){const im=document.createElement('img');im.className='bg';im.src=imageUrl(f.background);im.alt='';stage.append(im)}
 if(!f.background&&!f.pieces.length){const hint=document.createElement('div');hint.className='stage-placeholder';hint.innerHTML='Área de Trabalho<br><small>Monte a sua cena aqui!</small>';stage.append(hint)}
-f.pieces.forEach(p=>{const im=createLayer(p);im.style.zIndex=f.pieces.indexOf(p)+1;im.onpointerdown=e=>{if(playing)return;e.preventDefault();selected=p.uid;if(p.locked){render();return}im.setPointerCapture(e.pointerId);const r=stage.getBoundingClientRect();const move=ev=>{p.x=Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100));p.y=Math.max(0,Math.min(100,(ev.clientY-r.top)/r.height*100));im.style.left=p.x+'%';im.style.top=p.y+'%'};im.onpointermove=move;im.onpointerup=()=>{im.onpointermove=null;im.onpointerup=null;render()};figButtons.forEach(b=>b.disabled=false)};stage.append(im)});if(f.showVideo&&videoForFrame(f)){const placement=f.videoPlacement||(f.videoPlacement={x:50,y:53,size:38,angle:0});const layer=document.createElement('canvas');layer.className='student-video-layer'+(selected==='student'?' selected':'');layer.width=480;layer.height=270;layer.style.left=placement.x+'%';layer.style.top=placement.y+'%';layer.style.width=placement.size+'%';layer.style.height='auto';layer.style.transform='translate(-50%,-50%) rotate('+placement.angle+'deg) scaleX('+(placement.flipX===-1?-1:1)+')';layer.style.pointerEvents=playing?'none':'auto';layer.style.touchAction='none';layer.setAttribute('aria-label','Arraste a imagem da criança para posicioná-la');layer.onpointerdown=e=>{if(playing)return;e.preventDefault();selected='student';if(placement.locked){render();return}layer.setPointerCapture(e.pointerId);const r=stage.getBoundingClientRect();const move=ev=>{placement.x=Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100));placement.y=Math.max(0,Math.min(100,(ev.clientY-r.top)/r.height*100));layer.style.left=placement.x+'%';layer.style.top=placement.y+'%'};layer.onpointermove=move;layer.onpointerup=()=>{layer.onpointermove=null;layer.onpointerup=null;render()};figButtons.forEach(b=>b.disabled=false)};stage.append(layer);drawKeyedFrame(layer.getContext('2d'),videoForFrame(f));if(playing)requestVideoPreview(layer)} }
+f.pieces.forEach(p=>{const im=createLayer(p);im.style.zIndex=f.pieces.indexOf(p)+1;im.onpointerdown=e=>{if(playing)return;e.preventDefault();selected=p.uid;if(p.locked){render();return}im.setPointerCapture(e.pointerId);const r=stage.getBoundingClientRect();const move=ev=>{p.x=Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100));p.y=Math.max(0,Math.min(100,(ev.clientY-r.top)/r.height*100));im.style.left=p.x+'%';im.style.top=p.y+'%'};im.onpointermove=move;im.onpointerup=()=>{im.onpointermove=null;im.onpointerup=null;render()};figButtons.forEach(b=>b.disabled=false)};stage.append(im)});const playbackClip=playing&&activePlaybackClipId?videoClips.find(c=>c.id===activePlaybackClipId)?.video:null;const displayVideo=playing?playbackClip:(f.showVideo?videoForFrame(f):null);if(displayVideo){const placement=(playing&&activePlaybackPlacement)||f.videoPlacement||(f.videoPlacement={x:50,y:53,size:38,angle:0});const layer=document.createElement('canvas');layer.className='student-video-layer'+(selected==='student'?' selected':'');layer.width=480;layer.height=270;layer.style.left=placement.x+'%';layer.style.top=placement.y+'%';layer.style.width=placement.size+'%';layer.style.height='auto';layer.style.transform='translate(-50%,-50%) rotate('+placement.angle+'deg) scaleX('+(placement.flipX===-1?-1:1)+')';layer.style.pointerEvents=playing?'none':'auto';layer.style.touchAction='none';layer.setAttribute('aria-label','Arraste a imagem da criança para posicioná-la');layer.onpointerdown=e=>{if(playing)return;e.preventDefault();selected='student';if(placement.locked){render();return}layer.setPointerCapture(e.pointerId);const r=stage.getBoundingClientRect();const move=ev=>{placement.x=Math.max(0,Math.min(100,(ev.clientX-r.left)/r.width*100));placement.y=Math.max(0,Math.min(100,(ev.clientY-r.top)/r.height*100));layer.style.left=placement.x+'%';layer.style.top=placement.y+'%'};layer.onpointermove=move;layer.onpointerup=()=>{layer.onpointermove=null;layer.onpointerup=null;render()};figButtons.forEach(b=>b.disabled=false)};stage.append(layer);drawKeyedFrame(layer.getContext('2d'),displayVideo);if(playing)requestVideoPreview(layer)} }
 function moveFrame(from,to){
  if(playing||from===to||from<0||to<0||from>=frames.length||to>=frames.length)return;
  const active=frames[current],item=frames.splice(from,1)[0];frames.splice(to,0,item);
@@ -228,50 +228,50 @@ dot.onclick=e=>{e.stopPropagation();if(playing)return;current=i;selected=null;
  render()};b.append(dot);b.onclick=()=>{if(playing)return;current=i;selected=null;render()};root.append(b)})}
 function render(){rememberImageEdit();renderStage();renderTimeline();figButtons.forEach(b=>b.disabled=!piece());syncLockButton();undoImageButton.disabled=playing||imageHistoryAt<=0;redoImageButton.disabled=playing||imageHistoryAt>=imageHistory.length-1;updateSpeed();scheduleAutoSave()}
 function buildVideoAwareTimeline(snapshot,fps){
- const base=1000/Math.max(1,fps),timeline=[];
- for(let i=0;i<snapshot.length;){
-  const f=snapshot[i],id=f.showVideo?f.videoClipId:null;
-  if(id){
-   let end=i;while(end+1<snapshot.length&&snapshot[end+1].showVideo&&snapshot[end+1].videoClipId===id)end++;
-   const clip=videoClips.find(c=>c.id===id),duration=Number(clip?.video?.duration)||0;
-   // O vídeo permanece em primeiro plano durante todo o trecho, enquanto os quadros
-   // da animação avançam no ritmo definido. Se o vídeo for mais longo, os quadros
-   // desse trecho continuam em loop até o vídeo terminar.
-   timeline.push({startIndex:i,endIndex:end,displayIndex:i,clipId:id,frameDuration:base,duration:Math.max(base*(end-i+1),duration*1000)});
-   i=end+1;
-  }else{timeline.push({startIndex:i,endIndex:i,displayIndex:i,clipId:null,frameDuration:base,duration:base});i++}
- }
- let cursor=0;for(const item of timeline){item.start=cursor;cursor+=item.duration;item.end=cursor}
- timeline.total=cursor;return timeline;
+ // A animação é uma linha do tempo independente: todos os quadros avançam
+ // continuamente. Os vídeos são camadas sobrepostas, iniciadas no quadro em
+ // que foram marcados, e não substituem nem congelam a sequência de quadros.
+ const base=1000/Math.max(1,fps),events=[];let previousId=null,previousMarked=false;
+ snapshot.forEach((f,index)=>{
+  const id=f.showVideo?(f.videoClipId||clipForFrame(f)?.id||null):null;
+  if(id&&(!previousMarked||id!==previousId)){
+   const clip=videoClips.find(c=>c.id===id),duration=Math.max(base,(Number(clip?.video?.duration)||0)*1000);
+   events.push({id,clipId:id,start:index*base,end:index*base+duration,placement:f.videoPlacement||{x:50,y:53,size:38,angle:0},startIndex:index});
+  }
+  previousMarked=!!id;previousId=id;
+ });
+ const animationDuration=Math.max(base,snapshot.length*base);
+ const total=Math.max(animationDuration,...events.map(e=>e.end));
+ return {base,events,total,animationDuration,count:Math.max(1,snapshot.length)};
 }
-function timelineFrameIndex(item,elapsedMs){
- if(!item.clipId||item.endIndex<=item.startIndex)return item.startIndex;
- const count=item.endIndex-item.startIndex+1;
- const step=Math.floor(Math.max(0,elapsedMs-item.start)/Math.max(1,item.frameDuration));
- return item.startIndex+(step%count);
+function timelineFrameIndex(timeline,elapsedMs){
+ return Math.floor(Math.max(0,elapsedMs)/Math.max(1,timeline.base))%timeline.count;
+}
+function timelineVideoEvent(timeline,elapsedMs){
+ let active=null;
+ for(const event of timeline.events){if(event.start<=elapsedMs)active=event;else break}
+ return active&&elapsedMs<active.end?active:null;
 }
 function togglePlay(){
  if(playing){stopPlay();return}
  if(frames.some(f=>f.showVideo&&!videoForFrame(f))){message('Carregue todos os vídeos utilizados neste projeto antes de assistir.');return}
- playing=true;playBtn.setAttribute('aria-label','Parar animação');selected=null;
+ playing=true;playBtn.setAttribute('aria-label','Parar animação');selected=null;activePlaybackClipId=null;activePlaybackPlacement=null;
  const timeline=buildVideoAwareTimeline(frames,rate),audio=$('audio'),hasNarration=!!audioURL;
- videoClips.forEach(c=>{c.video.pause();c.video.currentTime=0;c.video.muted=false});
+ videoClips.forEach(c=>{c.video.pause();try{c.video.currentTime=0}catch(e){}c.video.muted=false});
  const begin=()=>{
   if(!playing)return;
-  const started=performance.now();let activeEntry=-1;
+  const started=performance.now();let activeEvent=null;
   if(hasNarration){try{audio.currentTime=0;audio.play().catch(()=>{})}catch(e){}}
   const tick=()=>{
    if(!playing)return;
    const elapsed=performance.now()-started;
-   let idx=timeline.findIndex(item=>elapsed<item.end);if(idx<0)idx=timeline.length-1;
-   const entry=timeline[idx];
-   if(idx!==activeEntry){
-    if(activeEntry>=0){const prev=timeline[activeEntry];if(prev.clipId){const old=videoClips.find(c=>c.id===prev.clipId);if(old)old.video.pause()}}
-    activeEntry=idx;
-    if(entry.clipId){const clip=videoClips.find(c=>c.id===entry.clipId);if(clip){try{clip.video.currentTime=0}catch(e){}clip.video.play().catch(()=>{})}}
+   const frameIndex=timelineFrameIndex(timeline,elapsed),event=timelineVideoEvent(timeline,elapsed);let eventChanged=false;
+   if(event!==activeEvent){eventChanged=true;
+    if(activeEvent){const old=videoClips.find(c=>c.id===activeEvent.clipId);if(old)old.video.pause()}
+    activeEvent=event;activePlaybackClipId=event?.clipId||null;activePlaybackPlacement=event?.placement||null;
+    if(event){const clip=videoClips.find(c=>c.id===event.clipId);if(clip){try{clip.video.currentTime=Math.max(0,(elapsed-event.start)/1000)}catch(e){}clip.video.play().catch(()=>{})}}
    }
-   const frameIndex=timelineFrameIndex(entry,elapsed);
-   if(current!==frameIndex){current=frameIndex;selected=null;render()}
+   if(current!==frameIndex){current=frameIndex;selected=null;render()}else if(eventChanged){renderStage()}
    if(elapsed>=timeline.total&&(!hasNarration||audio.ended||audio.currentTime>=audio.duration)){stopPlay();return}
    playTimer=requestAnimationFrame(tick);
   };
@@ -279,7 +279,7 @@ function togglePlay(){
  };
  begin();
 }
-function stopPlay(){$('stage').classList.remove('scene-playing');videoClips.forEach(c=>c.video.pause());if(testVideo)testVideo.pause();cancelAnimationFrame(videoPreviewFrame);playing=false;clearTimeout(playTimer);cancelAnimationFrame(playTimer);$('audio').pause();playBtn.setAttribute('aria-label','Assistir')}
+function stopPlay(){$('stage').classList.remove('scene-playing');videoClips.forEach(c=>c.video.pause());if(testVideo)testVideo.pause();cancelAnimationFrame(videoPreviewFrame);playing=false;activePlaybackClipId=null;activePlaybackPlacement=null;clearTimeout(playTimer);cancelAnimationFrame(playTimer);$('audio').pause();playBtn.setAttribute('aria-label','Assistir');if(frames.length)renderStage()}
 async function startRecording(){if(recorder?.state==='recording')return;try{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw Error('Gravação exige navegador compatível e conexão segura (HTTPS).');recordStream=await navigator.mediaDevices.getUserMedia({audio:true});recordChunks=[];recorder=new MediaRecorder(recordStream);recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};recorder.onstop=()=>{if(recordChunks.length){audioBlob=new Blob(recordChunks,{type:recorder.mimeType||'audio/webm'});if(audioURL)URL.revokeObjectURL(audioURL);audioURL=URL.createObjectURL(audioBlob);$('audio').src=audioURL;scheduleAutoSave();message('Voz gravada!')}recordStream?.getTracks().forEach(t=>t.stop());recordBtn.classList.remove('recording')};recorder.start();recordBtn.classList.add('recording');message('Gravando a voz…')}catch(e){message(e.message)}}
 function stopRecording(){if(recorder?.state==='recording')recorder.stop();else $('audio').pause()}
 
@@ -545,14 +545,14 @@ async function exportAnimation(){
   // Garante que o Safari já informou a duração de cada vídeo usado antes de montar a linha do tempo.
   const usedClipIds=[...new Set(snapshot.filter(f=>f.showVideo&&f.videoClipId).map(f=>f.videoClipId))];
   await Promise.all(usedClipIds.map(id=>{const c=videoClips.find(x=>x.id===id);if(!c||Number.isFinite(c.video.duration)&&c.video.duration>0)return Promise.resolve();return new Promise(resolve=>{const done=()=>{c.video.removeEventListener('loadedmetadata',done);c.video.removeEventListener('durationchange',done);resolve()};c.video.addEventListener('loadedmetadata',done,{once:true});c.video.addEventListener('durationchange',done,{once:true});try{c.video.load()}catch(e){resolve()}setTimeout(resolve,8000)})}));
-  // Cada trecho com vídeo ganha tempo suficiente para o vídeo terminar antes do próximo quadro.
+  // Os quadros avançam continuamente; os vídeos são eventos independentes em primeiro plano.
   const timeline=buildVideoAwareTimeline(snapshot,fps);
   const total=timeline.total/1000;
   const videoBeginning=0;
-  const clipStarts=new Map();for(const item of timeline){if(item.clipId&&!clipStarts.has(item.clipId))clipStarts.set(item.clipId,item.start/1000)}
+  const clipStarts=new Map();for(const event of timeline.events){if(!clipStarts.has(event.clipId))clipStarts.set(event.clipId,event.start/1000)}
   for(const c of videoClips){c.video.pause();c.video.muted=true;try{c.video.currentTime=0}catch(e){}}
   const keyed=document.createElement('canvas');keyed.width=640;keyed.height=360;
-  function drawComposite(index,elapsed=0){drawFrame(index,elapsed);if(snapshot[index].showVideo&&(videoForFrame(snapshot[index]))){drawKeyedFrame(keyed.getContext('2d',{willReadFrequently:true}),videoForFrame(snapshot[index]));(()=>{const q=snapshot[index].videoPlacement||{x:50,y:53,size:38,angle:0};const w=W*q.size/100,h=w*9/16;ctx.save();ctx.translate(W*q.x/100,H*q.y/100);ctx.rotate((q.angle||0)*Math.PI/180);ctx.scale(q.flipX===-1?-1:1,1);ctx.drawImage(keyed,-w/2,-h/2,w,h);ctx.restore()})()}}
+  function drawComposite(index,elapsed=0){drawFrame(index,elapsed);const event=timelineVideoEvent(timeline,elapsed*1000),clip=event&&videoClips.find(c=>c.id===event.clipId);if(clip){drawKeyedFrame(keyed.getContext('2d',{willReadFrequently:true}),clip.video);const q=event.placement||{x:50,y:53,size:38,angle:0};const w=W*q.size/100,h=w*9/16;ctx.save();ctx.translate(W*q.x/100,H*q.y/100);ctx.rotate((q.angle||0)*Math.PI/180);ctx.scale(q.flipX===-1?-1:1,1);ctx.drawImage(keyed,-w/2,-h/2,w,h);ctx.restore()}}
   drawComposite(0,0);
   stream=canvas.captureStream(30);
   let dest=null;
@@ -576,16 +576,14 @@ async function exportAnimation(){
   }
   // Desenhar repetidamente evita congelamento do vídeo no Safari.
   await new Promise(resolve=>{
-   let last=-1,lastProgressAt=0,activeExportClip=null;
+   let lastProgressAt=0,activeExportClip=null;
    const tick=()=>{
     const now=performance.now(),elapsed=(now-start)/1000;
-    let entryIndex=timeline.findIndex(item=>elapsed*1000<item.end);if(entryIndex<0)entryIndex=timeline.length-1;
-    const entry=timeline[entryIndex],index=timelineFrameIndex(entry,elapsed*1000);
-    if(entryIndex!==last){
+    const index=timelineFrameIndex(timeline,elapsed*1000),event=timelineVideoEvent(timeline,elapsed*1000),nextExportClip=event?.clipId||null;
+    if(nextExportClip!==activeExportClip){
      if(activeExportClip){const previous=videoClips.find(c=>c.id===activeExportClip);if(previous)previous.video.pause()}
-     activeExportClip=entry.clipId||null;
-     if(activeExportClip){const active=videoClips.find(c=>c.id===activeExportClip);if(active){try{active.video.currentTime=0}catch(e){}active.video.play().catch(()=>{})}}
-     last=entryIndex;
+     activeExportClip=nextExportClip;
+     if(activeExportClip){const active=videoClips.find(c=>c.id===activeExportClip);if(active){try{active.video.currentTime=Math.max(0,(elapsed*1000-event.start)/1000)}catch(e){}active.video.play().catch(()=>{})}}
     }
     if(!videoClips.length&&student&&elapsed>=videoBeginning&&student.paused&&!student.ended)student.play().catch(()=>{});
     drawComposite(index,elapsed);
@@ -593,7 +591,7 @@ async function exportAnimation(){
      const percent=Math.min(99,Math.round(elapsed/Math.max(.1,duration)*100));
      message('GERANDO VÍDEO… '+percent+'%');lastProgressAt=now;
     }
-    if(elapsed>=duration){drawComposite(N-1,elapsed);resolve();return}
+    if(elapsed>=duration){drawComposite(timelineFrameIndex(timeline,elapsed*1000),elapsed);resolve();return}
     setTimeout(tick,Math.min(33,Math.max(10,1000/fps/2)));
    };tick();
   });
@@ -610,7 +608,7 @@ async function exportAnimation(){
 
 // Laboratório de composição: vídeo de demonstração local, sem alterar o layout do editor.
 let testVideo=null,videoPreviewFrame=null,videoStartAt=0,studentVideoBlob=null,studentVideoName='',studentVideoId=null;
-let videoClips=[],activeClipId=null;
+let videoClips=[],activeClipId=null,activePlaybackClipId=null,activePlaybackPlacement=null;
 function clipForFrame(f){return videoClips.find(c=>c.id===f.videoClipId)||videoClips.find(c=>c.id===activeClipId)||null}
 function activateClip(id){const c=videoClips.find(c=>c.id===id);if(!c)return;activeClipId=id;testVideo=c.video;studentVideoBlob=c.blob;studentVideoName=c.name;studentVideoId=c.storageId||null}
 function addVideoClip(blob,name,storageId=null,id=null){
@@ -700,7 +698,7 @@ function drawKeyedFrame(ctx,v){
 }
 function requestVideoPreview(canvas){
  cancelAnimationFrame(videoPreviewFrame);
- const tick=()=>{if(!canvas.isConnected||!playing)return;if(videoForFrame(frames[current]))drawKeyedFrame(canvas.getContext('2d'),videoForFrame(frames[current]));videoPreviewFrame=requestAnimationFrame(tick)};
+ const tick=()=>{if(!canvas.isConnected||!playing)return;const v=activePlaybackClipId?videoClips.find(c=>c.id===activePlaybackClipId)?.video:null;if(v)drawKeyedFrame(canvas.getContext('2d'),v);videoPreviewFrame=requestAnimationFrame(tick)};
  tick()
 }
 function propagateVideos(){let active=null,placement=null;frames.forEach(f=>{if(f.videoStop){active=null;placement=null}if(f.videoStart&&f.videoClipId){active=f.videoClipId;placement=f.videoPlacement||{x:50,y:53,size:38,angle:0};f.videoStop=false}f.showVideo=!!active;if(active){f.videoClipId=active;f.videoPlacement=f.videoPlacement||{...placement}}else delete f.videoClipId})}
